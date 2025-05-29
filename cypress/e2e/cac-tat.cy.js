@@ -55,6 +55,53 @@ it('Exibe mensagem de erro quando o telefone se torna obrigatório mas não é p
 
 })
 
+it('Preenche e limpa os campos de nome,sobrenome ,email e telefone', () => {
+   
+  cy.get('#firstName')
+      .type('João')
+      .should('have.value', 'João')
+      .clear()
+      .should('have.value', '')
 
+    cy.get('#lastName')
+      .type('Silva')
+      .should('have.value', 'Silva')
+      .clear()
+      .should('have.value', '')
+
+    cy.get('#email')
+      .type('rogeriolana9@gmail.com')
+      .should('have.value', 'rogeriolana9@gmail.com')
+      .clear()
+      .should('have.value', '') 
+
+    cy.get('#phone')
+      .type('1234567890')
+      .should('have.value', '1234567890')
+      .clear()
+      .should('have.value', '') 
+  
+});
+
+it('Exibe mensagem de erro ao submeter o formulário sem preencher os campos obrigatórios', () => {
+    cy.get('button[type="submit"]').click()
+    cy.get('.error').should('be.visible')
+
+})
+
+it('Envia o formulário com sucesso usando um comando customizado', () => {
+  const data ={
+    firstName: 'João',
+    lastName: 'Silva',
+    email: 'rogeriolana9@gmail.com',
+    text: 'Teste de envio com comando customizado'
+  }
+
+    cy.fillMandatoryFieldsAndSubmit(data)
+    
+
+    cy.get('.success').should('be.visible')
+
+  })
 
 })
