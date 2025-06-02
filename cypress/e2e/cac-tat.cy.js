@@ -155,13 +155,43 @@ it('Envia o formulário com sucesso usando um comando customizado', () => {
       })
   })
   
-  it.only('seleciona um arquivo simulando um drag-and-drop', () => {
+  it('seleciona um arquivo simulando um drag-and-drop', () => {
     cy.get('#file-upload')
       .selectFile('./cypress/fixtures/example.json', { action:'drag-drop' })
       .should((input) => {
         expect(input[0].files[0].name).to.equal('example.json')
       })
   })
+  
+  it('seletciona um arquivo utilizando uma fixture para a qual foi dada um alias', () => {
+    cy.fixture('example.json').as('sampleFile')
+    cy.get('#file-upload')
+      .selectFile('@sampleFile')
+      .should((input) => {
+        expect(input[0].files[0].name).to.equal('example.json')
+      })
+  })
+
+  it.only('Verificaque a politica de privacidade abre em outra aba sem a necessidade de um clique', () => {
+    cy.get('#privacy a')
+      .should('have.attr', 'target', '_blank')
+      .invoke('removeAttr', 'target')
+      .click()
+
+    cy.get('#title').should('be.visible')
+    
+     
+  })
+  it('Acessa a página da política de privacidade removendo o target e então clicando no link', () => {
+    cy.get('#privacy a')
+      .invoke('removeAttr', 'target')
+      .click()
+
+    cy.get('#title').should('be.visible')
+  })
+
+
+  
 
  
 
