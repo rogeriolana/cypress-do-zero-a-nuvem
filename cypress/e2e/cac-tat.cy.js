@@ -172,7 +172,7 @@ it('Envia o formulário com sucesso usando um comando customizado', () => {
       })
   })
 
-  it.only('Verificaque a politica de privacidade abre em outra aba sem a necessidade de um clique', () => {
+  it('Verificaque a politica de privacidade abre em outra aba sem a necessidade de um clique', () => {
     cy.get('#privacy a')
       .should('have.attr', 'target', '_blank')
       .invoke('removeAttr', 'target')
