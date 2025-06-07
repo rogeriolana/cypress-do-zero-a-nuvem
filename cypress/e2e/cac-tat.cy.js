@@ -10,6 +10,7 @@ describe('Central de atendimento ao cliente TAT', () => {
   })
 
   it('Preenche os campos obrigatórios e envia o formulário', () => {
+    cy.clock()
     const longText = 'Teste de preenchimento do formulário'.repeat(20)
     cy.get('#firstName').type('João')
     cy.get('#lastName').type('Silva')
@@ -19,17 +20,25 @@ describe('Central de atendimento ao cliente TAT', () => {
     cy.get('.button').click()
     
     cy.get('.success').should('be.visible') 
+
+    cy.tick(3000)
+    cy.get('.success').should('not.be.visible') 
     
 })
 
 it('Exibe mensagem de erro ao submeter o formulario em email com formatação invalida', () => {
+  cy.clock()
     cy.get('#firstName').type('João')
     cy.get('#lastName').type('Silva')
     cy.get('#email').type('rogeriolana9@gmail,com')
     cy.get('#open-text-area').type('Teste ')
     cy.get('button[type="submit"]').click()
-    
+
+  
     cy.get('.error').should('be.visible') 
+
+     cy.tick(3000)
+    cy.get('.success').should('not.be.visible') 
 
   
 });
@@ -44,6 +53,7 @@ it('Campo telefone continua vazio quando preenchido com valor nao-numerico', () 
 });
 
 it('Exibe mensagem de erro quando o telefone se torna obrigatório mas não é preenchido antes do envio do formulário', () => {
+  cy.clock()  
      cy.get('#firstName').type('João')
     cy.get('#lastName').type('Silva')
     cy.get('#email').type('rogeriolana9@gmail.com')
@@ -52,6 +62,8 @@ it('Exibe mensagem de erro quando o telefone se torna obrigatório mas não é p
     cy.get('button[type="submit"]').click()
 
     cy.get('.error').should('be.visible')
+    cy.tick(3000)
+    cy.get('.error').should('not.be.visible') 
 
 })
 
@@ -84,12 +96,18 @@ it('Preenche e limpa os campos de nome,sobrenome ,email e telefone', () => {
 });
 
 it('Exibe mensagem de erro ao submeter o formulário sem preencher os campos obrigatórios', () => {
+  cy.clock()
     cy.get('button[type="submit"]').click()
     cy.get('.error').should('be.visible')
+
+    cy.tick(3000)
+    cy.get('.error').should('not.be.visible') 
 
 })
 
 it('Envia o formulário com sucesso usando um comando customizado', () => {
+
+  cy.clock()
   const data ={
     firstName: 'João',
     lastName: 'Silva',
@@ -101,6 +119,8 @@ it('Envia o formulário com sucesso usando um comando customizado', () => {
     
 
     cy.get('.success').should('be.visible')
+    cy.tick(3000)
+    cy.get('.success').should('not.be.visible') 
 
   })
 
@@ -182,12 +202,67 @@ it('Envia o formulário com sucesso usando um comando customizado', () => {
     
      
   })
-  it('Acessa a página da política de privacidade removendo o target e então clicando no link', () => {
+  // testando Lodash  rodando 5 vezes o teste abaixo
+
+  Cypress._.times(5, () => {
+   it('Acessa a página da política de privacidade removendo o target e então clicando no link', () => {
     cy.get('#privacy a')
       .invoke('removeAttr', 'target')
       .click()
 
-    cy.get('#title').should('be.visible')
+    cy.get('#title')
+      .should('be.visible')
+      
+      })  
+
+  })
+  it('Exibe e esconde as mensagens de sucesso e erro usando o .invoke', () => {
+    cy.get('.success')
+      .should('not.be.visible')
+      .invoke('show')
+      .should('be.visible')
+      .and('contain', 'Mensagem enviada com sucesso.')
+      .invoke('hide')
+      .should('not.be.visible')
+
+    cy.get('.error')
+      .should('not.be.visible')
+      .invoke('show')
+      .should('be.visible')
+      .and('contain', 'Valide os campos obrigatórios!')
+      .invoke('hide')
+      .should('not.be.visible')
+
+  })  
+  it('preenche a area de texto usando o comando invoke', () => {
+    const longText = 'Teste de preenchimento do formulário'.repeat(20)
+    cy.get('#open-text-area')
+      .invoke('val', longText)
+      .should('have.value', longText)
+  })
+  it('faz uma requisição HTTP', () => {
+    cy.request('https://cac-tat.s3.eu-central-1.amazonaws.com/index.html')
+      .as('getRequest')
+      .its('status')
+      .should('be.equal', 200)  
+      cy.get('@getRequest')
+      .its('statusText')
+      .should('be.equal', 'OK')
+      cy.get('@getRequest')
+      .its('body')
+      .should('include', 'CAC TAT')
+      
+
+      })
+      it('Encontra o gato escondido', () => {
+        cy.get('#cat')
+          .invoke('show')
+          .should('be.visible')
+          cy.get('#title')
+          .invoke('text' , 'CAT TAT')
+          cy.get('#subtitle')
+          .invoke('text', 'Eu Amo Gatos')
+      })  
   })
 
 
@@ -195,4 +270,3 @@ it('Envia o formulário com sucesso usando um comando customizado', () => {
 
  
 
-})
